@@ -1,73 +1,110 @@
-//To initate our tests, we must first include the selenium-webdriver module.
-//We require the module and assign it to the variable "webdriver".
-//We create a "By" and "until" shorthand variable for referencing the "By" class and "until" module
-    //more easily within our subsequent code. "until" defines common conditions for use with "WebDriver wait".
-//"By" describes a mechanism for locating an element on the page.
 
-var webdriver = require('selenium-webdriver'),
-    By = webdriver.By,
-    until = webdriver.until;
+var webdriver = require('selenium-webdriver');
+var By = webdriver.By;
+var until = webdriver.until;
 
-//We instantiate a new instance of webdriver using its Builder function,
-//and we assign that instance to a variable called "driver_fx" for Firefox.
-// We then chain the instance method .forBrowser and pass it the argument 'firefox' to dictate browser type,
-// and finally run the build() function to build the instance appropriately for Firefox.
-
-var driver_fx = new webdriver.Builder()
-    .forBrowser('firefox')
-    .build();
-
-//We instantiate a new instance of webdriver using its Builder function,
-//and we assign that instance to a variable called "driver_chr" for Chrome.
-// We then chain the instance method .forBrowser and pass it the argument 'chrome' to dictate browser type,
-// and finally run the build() function to build the instance appropriately for Chrome.
-
-var driver_chr = new webdriver.Builder()
-    .forBrowser('chrome')
-    .build();
-
-//We instantiate a new instance of webdriver using its Builder function,
-//and we assign that instance to a variable called "driver_saf" for Safari.
-// We then chain the instance method .forBrowser and pass it the argument 'safari' to dictate browser type,
-// and finally run the build() function to build the instance appropriately for Safari.
+// var driver_fx = new webdriver.Builder()
+//     .forBrowser('firefox')
+//     .build();
+//
+// var driver_chr = new webdriver.Builder()
+//     .forBrowser('chrome')
+//     .build();
 
 var driver_saf = new webdriver.Builder()
     .forBrowser('safari')
     .build();
 
-//We run each browser instance through our searchTest function.
 
-searchTest(driver_fx);
-searchTest(driver_chr);
-searchTest(driver_saf);
+// TEST FUNCTIONS
+// siteVerification(driver_fx);
+// newIdea(driver_fx);
+// persistIdea(driver_fx);
+// upVoteIdea(driver_fx);
+//
+// siteVerification(driver_chr);
+// newIdea(driver_chr);
+// persistIdea(driver_chr);
+// upVoteIdea(driver_chr);
 
-//Our searchTest function accepts a driver as an argument, and then runs selenium's .get method to access Google's main search url.
-//It then finds an element on the page using the By class to search by attribute "name" with the value of "q".
-//The resulting element is an input field, so we chain the .sendKeys method to have Selenium input "webdriver" as the search term.
-//Following, we locate Google's submit search button via the By class again and name attribute, and chain the .click method to simulate user click.
+siteVerification(driver_saf);
+newIdea(driver_saf);
+persistIdea(driver_saf);
+upVoteIdea(driver_saf);
 
-function searchTest(driver) {
-  driver.get('http://www.google.com');
-  driver.findElement(By.name('q')).sendKeys('webdriver');
-  driver.findElement(By.name('btnG')).click();
 
-//Once we've simulated a user navigating to Google's search page, inputting search text, and then clicking the search button,
-    //we have to buy ourselves a little time for the browser to return search results and then validate the result page.
-//We use the sleep() method to delay 2 seconds (2000 miliseconds), and once that time passes, we chain a series of "step methods" with
-    //javascript's .then() method to locate the title element on the Google results page and run a conditional to check
-    //for the  title tag's value of 'webdriver - Google Search'. If it matches, the test passes, otherwise failure.
+function siteVerification(driver) {
+  driver.get('file:///Users/anderswood/Documents/Turing/2dobox-pivot/index.html');
+  driver.findElement(By.id('ideabox')).getText().then(function(siteName) {
+    if(siteName === 'idea') {
+      console.log('Site Verification Test passed');
+    } else {
+      console.log('Site Verification Test failed');
+    }
+  })
 
-    driver.sleep(2000).then(function() {
-    driver.getTitle().then(function(title) {
-      if(title === 'webdriver - Google Search') {
-        console.log('Test passed');
-      } else {
-        console.log('Test failed');
-      }
-    });
+  // driver.quit();
+}
+
+function newIdea(driver) {
+  driver.get('file:///Users/anderswood/Documents/Turing/2dobox-pivot/index.html');
+  driver.findElement(By.id('title-input')).sendKeys('title1');
+  driver.findElement(By.id('content-input')).sendKeys('body1');
+  driver.findElement(By.id('submit')).click();
+
+    driver.sleep(1500).then(function() {
+      driver.findElement(By.className('entry-title')).getText().then(function(title) {
+        if(title === 'title1') {
+          console.log('New Title Test passed');
+        } else {
+          console.log('New Title Test failed');
+        }
+      });
+
+      driver.findElement(By.className('entry-body')).getText().then(function(title) {
+        if(title === 'body1') {
+          console.log('New Body Test passed');
+        } else {
+          console.log('New Body Test failed');
+        }
+      });
+
+
   });
 
-//After each searchTest set of statements run, we close the driver instance before exiting the function.
-//This prevents multiple browser windows from cluttering up our environment.
-  driver.quit();
+  // driver.quit();
+}
+
+function persistIdea(driver) {
+  driver.get('file:///Users/anderswood/Documents/Turing/2dobox-pivot/index.html');
+  driver.navigate().refresh();
+
+    driver.sleep(1500).then(function() {
+      driver.findElement(By.className('entry-title')).getText().then(function(title) {
+        if(title === 'title1') {
+          console.log('Persist Idea Test passed');
+        } else {
+          console.log('Persist Idea Test failed');
+        }
+      });
+    })
+
+  // driver.quit();
+}
+
+function upVoteIdea(driver) {
+  driver.get('file:///Users/anderswood/Documents/Turing/2dobox-pivot/index.html');
+  driver.findElement(By.className('upvote')).click();
+
+  driver.sleep(1500).then(function() {
+    driver.findElement(By.className('quality')).getText().then(function(upVotedQual) {
+      if(upVotedQual === 'plausible') {
+        console.log('Upvote Test passed');
+      } else {
+        console.log('Upvote Test failed');
+      }
+    });
+  })
+
+  // driver.quit();
 }
