@@ -46,6 +46,7 @@ article {
 
 .new-idea {
   text-align: left;
+  margin-bottom: 5px;
 }
 
 
@@ -192,6 +193,10 @@ button {
   background-image: url("images/downvote-hover.svg");
 }
 
+.completed {
+  background-color: #848484;
+  border-bottom: 2px solid #848484;
+}
 
 /*----Media Queries ----*/
 

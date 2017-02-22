@@ -1,7 +1,7 @@
 var data = [];
 
 getCard();
-printCard();
+printIncompleteCards();
 
 $("#title-input, #task-input").on("keyup", disableEnter);
 
@@ -12,7 +12,7 @@ $("#submit").on('click', function(e) {
   var card = new Card(storeCardTitle, storeCardContent);
   data.unshift(card);
   storeCard();
-  printCard();
+  printIncompleteCards();
   clearInput();
   disableEnter();
 })
@@ -95,6 +95,11 @@ $('#search').on('keyup', function() {
   })
 });
 
+$('.show-complete').on('click', function() {
+  sortArray();
+  printAllCards();
+})
+
 $('.importance-radio-button').on('click', function() {
   var filterImportance = $(this).val();
   console.log(filterImportance);
@@ -110,6 +115,26 @@ $('.importance-radio-button').on('click', function() {
   })
 })
 
+$("#card-section").on('click', '.task-complete', function() {
+  $(this).closest('.new-idea').toggleClass('completed');
+  var completeStatus = false
+  if ($(this).closest('.new-idea').hasClass('completed')) {
+    completeStatus = true
+  }
+  editComplete(this,completeStatus);
+})
+
+function editComplete(location, completeStatus) {
+  var objectId = $(location).closest('.new-idea').attr('id');
+  data = JSON.parse(localStorage.getItem("Data Item"));
+  data.forEach(function(object) {
+    if (object.id == objectId) {
+      object.complete = completeStatus;
+    }
+  });
+  storeCard();
+}
+
 $("#title-input, #task-input").on("keyup", disableEnter);
 
 function Card(storeCardTitle, storeCardContent) {
@@ -117,6 +142,7 @@ function Card(storeCardTitle, storeCardContent) {
     this.body = storeCardContent;
     this.importance = "None";
     this.id = Date.now();
+    this.complete = false;
 }
 
 function storeCard() {
@@ -130,25 +156,65 @@ function getCard() {
     data = parsedData;
 }
 
-function printCard() {
+function printAllCards() {
   $("#card-section").html('');
-  data.forEach(function(object) {
-    $("#card-section").append(
-      `<div id="${object.id}" class="new-idea">
-				<header>
-					<h1 class="entry-title" contenteditable='true'>${object.title}</h1>
-					<button class="delete"></button>
-				</header>
-				<article>
-					<p class='entry-body' contenteditable='true'>${object.body}</p>
-					<button class="upvote"></button>
-					<button class="downvote"></button>
-					<h3>Importance:<h4 class="importance">${object.importance}</h4></h3>
-				</article>
-				<hr>
-			</div>`
-    );
+  data.forEach(function(task) {
+    var complete = ''
+    if (task.complete) {
+      complete = ' completed';
+    }
+      $("#card-section").append(
+        `<div id="${task.id}" class="new-idea${complete}">
+          <header>
+            <h1 class="entry-title" contenteditable='true'>${task.title}</h1>
+            <button class="delete"></button>
+          </header>
+          <article>
+            <p class='entry-body' contenteditable='true'>${task.body}</p>
+            <button class="upvote"></button>
+            <button class="downvote"></button>
+            <h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
+            <button class="task-complete">Completed</button>
+          </article>
+          <hr>
+        </div>`
+      );
   });
+}
+
+function printIncompleteCards() {
+  $("#card-section").html('');
+  data.forEach(function(task) {
+    if (!task.complete) {
+      $("#card-section").append(
+        `<div id="${task.id}" class="new-idea">
+  				<header>
+  					<h1 class="entry-title" contenteditable='true'>${task.title}</h1>
+  					<button class="delete"></button>
+  				</header>
+  				<article>
+  					<p class='entry-body' contenteditable='true'>${task.body}</p>
+  					<button class="upvote"></button>
+  					<button class="downvote"></button>
+  					<h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
+            <button class="task-complete">Completed</button>
+  				</article>
+  				<hr>
+  			</div>`
+      );
+    }
+  });
+}
+
+function sortArray() {
+  data.sort(function(task1,task2){
+    if (task1.complete>task2.complete) {
+      return -1;
+    } if (task1.complete<task2.complete) {
+      return 1;
+    }
+      return 0;
+  })
 }
 
 function clearInput() {
