@@ -1,4 +1,6 @@
 var data = [];
+var slicedData;
+var dataSize = 10;
 
 getCard();
 printIncompleteCards();
@@ -100,6 +102,14 @@ $('.show-complete').on('click', function() {
   printAllCards();
 })
 
+$('.show-more-todos').on('click', function() {
+  dataSize++;
+  getCard();
+  printIncompleteCards();
+})
+
+
+
 $('.importance-radio-button').on('click', function() {
   var filterImportance = $(this).val();
   console.log(filterImportance);
@@ -158,7 +168,8 @@ function getCard() {
 
 function printAllCards() {
   $("#card-section").html('');
-  data.forEach(function(task) {
+  slicedData = data.slice(0,dataSize);
+  slicedData.forEach(function(task) {
     var complete = ''
     if (task.complete) {
       complete = ' completed';
@@ -184,7 +195,8 @@ function printAllCards() {
 
 function printIncompleteCards() {
   $("#card-section").html('');
-  data.forEach(function(task) {
+  slicedData = data.slice(0,dataSize);
+  slicedData.forEach(function(task) {
     if (!task.complete) {
       $("#card-section").append(
         `<div id="${task.id}" class="new-idea">
