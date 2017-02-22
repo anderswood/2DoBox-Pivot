@@ -96,8 +96,18 @@ $('#search').on('keyup', function() {
 });
 
 $('.importance-radio-button').on('click', function() {
-  var importanceValue = $('.importance-radio-button').val();
-  console.log(importanceValue);
+  var filterImportance = $(this).val();
+  console.log(filterImportance);
+  var filter = new RegExp(filterImportance, 'igm');
+  $('.new-idea').each(function() {
+    var taskImportance = $(this).find(".importance").text();
+    var match = (taskImportance.match(filter));
+    if (!match) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  })
 })
 
 $("#title-input, #task-input").on("keyup", disableEnter);
