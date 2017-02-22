@@ -3,12 +3,12 @@ var data = [];
 getCard();
 printCard();
 
-$("#title-input, #content-input").on("keyup", disableEnter);
+$("#title-input, #task-input").on("keyup", disableEnter);
 
 $("#submit").on('click', function(e) {
   e.preventDefault();
   var storeCardTitle = $('#title-input').val();
-  var storeCardContent = $('#content-input').val();
+  var storeCardContent = $('#task-input').val();
   var card = new Card(storeCardTitle, storeCardContent);
   data.unshift(card);
   storeCard();
@@ -81,7 +81,7 @@ $('#search').on('keyup', function() {
   })
 });
 
-$("#title-input, #content-input").on("keyup", disableEnter);
+$("#title-input, #task-input").on("keyup", disableEnter);
 
 function Card(storeCardTitle, storeCardContent) {
     this.title = storeCardTitle;
@@ -124,11 +124,11 @@ function printCard() {
 
 function clearInput() {
   $('#title-input').val('');
-  $('#content-input').val('');
+  $('#task-input').val('');
 }
 
 function disableEnter() {
-  if ($("#title-input").val() == "" || $("#content-input").val() == "") {
+  if ($("#title-input").val() == "" || $("#task-input").val() == "") {
     $("#submit").prop("disabled", true);
   } else {
     $("#submit").prop("disabled", false);
