@@ -18,33 +18,47 @@ $("#submit").on('click', function(e) {
 })
 
 $("#card-section").on('click', '.upvote', function() {
-  var qualityVar = $(this).siblings(".quality").text();
-  if ($(this).siblings(".quality").text() === "swill") {
-    $(this).siblings(".quality").text("plausible");
-    qualityVar = "plausible";
-    editQuality(this, qualityVar);
-  } else if ($(this).siblings(".quality").text() === "plausible") {
-    $(this).siblings(".quality").text("genius");
-    qualityVar = "genius"
-    editQuality(this, qualityVar);
-  } else if ($(this).siblings(".quality").text() === "genius") {
-    qualityVar = "genius";
+  var $importanceVar = $(this).siblings(".importance");
+  switch($importanceVar.text()){
+    case 'None':
+      $importanceVar.text('Low');
+      break;
+    case 'Low':
+      $importanceVar.text('Normal');
+      break;
+    case 'Normal':
+      $importanceVar.text('High');
+      break;
+    case 'High':
+      $importanceVar.text('Critical');
+      break;
+    default:
+      $importanceVar.text('Critical');
   }
+  editQuality(this, $importanceVar.text());
+  console.log($importanceVar.text());
 });
 
 $("#card-section").on('click', '.downvote', function() {
-  var qualityVar = $(this).siblings(".quality").text();
-  if ($(this).siblings(".quality").text() === "genius") {
-    $(this).siblings(".quality").text("plausible");
-    qualityVar = "plausible";
-    editQuality(this, qualityVar);
-  } else if ($(this).siblings(".quality").text() === "plausible") {
-    $(this).siblings(".quality").text("swill");
-    qualityVar = "swill";
-    editQuality(this, qualityVar);
-  } else if ($(this).siblings(".quality").text() === "plausible") {
-    qualityVar = "swill";
+  var $importanceVar = $(this).siblings(".importance");
+  switch($importanceVar.text()){
+    case 'Critical':
+      $importanceVar.text('High');
+      break;
+    case 'High':
+      $importanceVar.text('Normal');
+      break;
+    case 'Normal':
+      $importanceVar.text('Low');
+      break;
+    case 'Low':
+      $importanceVar.text('None');
+      break;
+    default:
+      $importanceVar.text('None');
   }
+  editQuality(this, $importanceVar.text());
+  console.log($importanceVar.text());
 });
 
 $('#card-section').on('blur', '.entry-title', function() {
@@ -81,12 +95,17 @@ $('#search').on('keyup', function() {
   })
 });
 
+$('.importance-radio-button').on('click', function() {
+  var importanceValue = $('.importance-radio-button').val();
+  console.log(importanceValue);
+})
+
 $("#title-input, #task-input").on("keyup", disableEnter);
 
 function Card(storeCardTitle, storeCardContent) {
     this.title = storeCardTitle;
     this.body = storeCardContent;
-    this.quality = "swill";
+    this.importance = "None";
     this.id = Date.now();
 }
 
@@ -114,7 +133,7 @@ function printCard() {
 					<p class='entry-body' contenteditable='true'>${object.body}</p>
 					<button class="upvote"></button>
 					<button class="downvote"></button>
-					<h3>quality:<h4 class="quality">${object.quality}</h4></h3>
+					<h3>Importance:<h4 class="importance">${object.importance}</h4></h3>
 				</article>
 				<hr>
 			</div>`
@@ -135,17 +154,15 @@ function disableEnter() {
   }
 }
 
-function editQuality(location, qualityVar) {
+function editQuality(location, importanceVar) {
   var objectId = $(location).closest('.new-idea').attr('id');
   data = JSON.parse(localStorage.getItem("Data Item"));
   data.forEach(function(object) {
     if (object.id == objectId) {
-      object.quality = qualityVar;
-      return object.quality;
+      object.importance = importanceVar;
     }
   });
-  stringData = JSON.stringify(data);
-  localStorage.setItem("Data Item", stringData);
+  storeCard();
 }
 
 function editTitleText(location, newText) {
@@ -157,8 +174,7 @@ function editTitleText(location, newText) {
             return object.title;
         }
     });
-    stringData = JSON.stringify(data);
-    localStorage.setItem("Data Item", stringData);
+    storeCard();
 }
 
 function editBodyText(location, newText) {
@@ -170,8 +186,7 @@ function editBodyText(location, newText) {
             return object.body;
         }
     });
-    stringData = JSON.stringify(data);
-    localStorage.setItem("Data Item", stringData);
+    storeCard();
 }
 
 function deleteCard (location, idOfRemoved) {
