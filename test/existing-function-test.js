@@ -37,8 +37,8 @@ deleteButton(driver_chr);
 
 function siteVerification(driver) {
   driver.get('https://anderswood.github.io/2DoBox-Pivot/');
-  driver.findElement(By.id('ideabox')).getText().then(function(siteName) {
-    if(siteName === 'idea') {
+  driver.findElement(By.id('todobox')).getText().then(function(siteName) {
+    if(siteName === '2Do') {
       console.log('Site Verification Test passed');
     } else {
       console.log('Site Verification Test failed');
@@ -51,7 +51,7 @@ function siteVerification(driver) {
 function newIdea(driver) {
   driver.get('https://anderswood.github.io/2DoBox-Pivot/');
   driver.findElement(By.id('title-input')).sendKeys('title1');
-  driver.findElement(By.id('content-input')).sendKeys('body1');
+  driver.findElement(By.id('task-input')).sendKeys('body1');
   driver.findElement(By.id('submit')).click();
 
     driver.sleep(5000).then(function() {
@@ -99,8 +99,8 @@ function upVoteIdea(driver) {
   driver.findElement(By.className('upvote')).click();
 
   driver.sleep(1500).then(function() {
-    driver.findElement(By.className('quality')).getText().then(function(upVotedQual) {
-      if(upVotedQual === 'plausible') {
+    driver.findElement(By.className('importance')).getText().then(function(upVotedQual) {
+      if(upVotedQual === 'Low') {
         console.log('Upvote Test passed');
       } else {
         console.log('Upvote Test failed');
@@ -116,8 +116,8 @@ function downVoteIdea(driver) {
   driver.findElement(By.className('downvote')).click();
 
   driver.sleep(1500).then(function() {
-    driver.findElement(By.className('quality')).getText().then(function(upVotedQual) {
-      if(upVotedQual === 'plausible') {
+    driver.findElement(By.className('importance')).getText().then(function(upVotedQual) {
+      if(upVotedQual === 'Normal') {
         console.log('Downvote Test passed');
       } else {
         console.log('Downvote Test failed');
@@ -129,7 +129,7 @@ function downVoteIdea(driver) {
 function deleteButton(driver) {
   driver.get('https://anderswood.github.io/2DoBox-Pivot/');
   driver.findElement(By.id('title-input')).sendKeys('title2');
-  driver.findElement(By.id('content-input')).sendKeys('body2');
+  driver.findElement(By.id('task-input')).sendKeys('body2');
   driver.findElement(By.id('submit')).click();
 
     driver.sleep(5000).then(function() {
@@ -149,7 +149,7 @@ function deleteButton(driver) {
         }
       });
 
-      driver.findElement(By.className('clear')).click();
+      driver.findElement(By.className('delete')).click();
       driver.sleep(5000).then(function() {
         driver.findElement(By.className('entry-title')).getText().then(function(title) {
           if(title === 'title2') {
