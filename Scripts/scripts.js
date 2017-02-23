@@ -1,23 +1,62 @@
-var data = [];
-var slicedData;
-var dataSize = 10;
+var taskArray = [];
+var slicedTaskArray;
+var displayedTasks = 10;
 
 getCard();
 printIncompleteCards();
-
-$("#title-input, #task-input").on("keyup", disableEnter);
 
 $("#submit").on('click', function(e) {
   e.preventDefault();
   var storeCardTitle = $('#title-input').val();
   var storeCardContent = $('#task-input').val();
   var card = new Card(storeCardTitle, storeCardContent);
-  data.unshift(card);
+  taskArray.unshift(card);
   storeCard();
   printIncompleteCards();
   clearInput();
   disableEnter();
 })
+
+$('.show-complete').on('click', function() {
+  sortArray();
+  printAllCards();
+})
+
+$('.show-more-todos').on('click', function() {
+  displayedTasks++;
+  getCard();
+  printIncompleteCards();
+})
+
+$('.importance-radio-button').on('click', function() {
+  var filterImportance = $(this).val();
+  console.log(filterImportance);
+  var filter = new RegExp(filterImportance, 'igm');
+  $('.new-task').each(function() {
+    var taskImportance = $(this).find(".importance").text();
+    var match = (taskImportance.match(filter));
+    if (!match) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  })
+})
+
+$('#search').on('keyup', function() {
+  var searchInput = $('#search').val();
+  var re = new RegExp(searchInput, 'igm');
+  $('.new-task').each(function() {
+    var title = $(this).find(".entry-title").text();
+    var body = $(this).find("article p").text();
+    var match = (title.match(re) || body.match(re));
+    if (!match) {
+      $(this).hide();
+    } else {
+      $(this).show();
+    }
+  })
+});
 
 $("#card-section").on('click', '.upvote', function() {
   var $importanceVar = $(this).siblings(".importance");
@@ -37,7 +76,7 @@ $("#card-section").on('click', '.upvote', function() {
     default:
       $importanceVar.text('Critical');
   }
-  editQuality(this, $importanceVar.text());
+  editImportance(this, $importanceVar.text());
   console.log($importanceVar.text());
 });
 
@@ -59,9 +98,25 @@ $("#card-section").on('click', '.downvote', function() {
     default:
       $importanceVar.text('None');
   }
-  editQuality(this, $importanceVar.text());
+  editImportance(this, $importanceVar.text());
   console.log($importanceVar.text());
 });
+
+$("#card-section").on('click', '.delete', function() {
+  var idOfRemoved = $(this).closest('.new-task').attr('id');
+  console.log(idOfRemoved);
+  deleteCard(this, idOfRemoved);
+  $(this).closest('.new-task').remove();
+});
+
+$("#card-section").on('click', '.task-complete', function() {
+  $(this).closest('.new-task').toggleClass('completed');
+  var completeStatus = false
+  if ($(this).closest('.new-task').hasClass('completed')) {
+    completeStatus = true
+  }
+  editComplete(this,completeStatus);
+})
 
 $('#card-section').on('blur', '.entry-title', function() {
   var newTitleText = $(this).text();
@@ -73,71 +128,10 @@ $('#card-section').on('blur', '.entry-body', function() {
   editBodyText(this, newBodyText);
 });
 
-
-$("#card-section").on('click', '.delete', function() {
-  var idOfRemoved = $(this).closest('.new-idea').attr('id');
-  console.log(idOfRemoved);
-  deleteCard(this, idOfRemoved);
-  $(this).closest('.new-idea').remove();
-});
-
-
-$('#search').on('keyup', function() {
-  var searchInput = $('#search').val();
-  var re = new RegExp(searchInput, 'igm');
-  $('.new-idea').each(function() {
-    var title = $(this).find(".entry-title").text();
-    var body = $(this).find("article p").text();
-    var match = (title.match(re) || body.match(re));
-    if (!match) {
-      $(this).hide();
-    } else {
-      $(this).show();
-    }
-  })
-});
-
-$('.show-complete').on('click', function() {
-  sortArray();
-  printAllCards();
-})
-
-$('.show-more-todos').on('click', function() {
-  dataSize++;
-  getCard();
-  printIncompleteCards();
-})
-
-
-
-$('.importance-radio-button').on('click', function() {
-  var filterImportance = $(this).val();
-  console.log(filterImportance);
-  var filter = new RegExp(filterImportance, 'igm');
-  $('.new-idea').each(function() {
-    var taskImportance = $(this).find(".importance").text();
-    var match = (taskImportance.match(filter));
-    if (!match) {
-      $(this).hide();
-    } else {
-      $(this).show();
-    }
-  })
-})
-
-$("#card-section").on('click', '.task-complete', function() {
-  $(this).closest('.new-idea').toggleClass('completed');
-  var completeStatus = false
-  if ($(this).closest('.new-idea').hasClass('completed')) {
-    completeStatus = true
-  }
-  editComplete(this,completeStatus);
-})
-
 function editComplete(location, completeStatus) {
-  var objectId = $(location).closest('.new-idea').attr('id');
-  data = JSON.parse(localStorage.getItem("Data Item"));
-  data.forEach(function(object) {
+  var objectId = $(location).closest('.new-task').attr('id');
+  taskArray = JSON.parse(localStorage.getItem("Data Item"));
+  taskArray.forEach(function(object) {
     if (object.id == objectId) {
       object.complete = completeStatus;
     }
@@ -145,81 +139,49 @@ function editComplete(location, completeStatus) {
   storeCard();
 }
 
-$("#title-input, #task-input").on("keyup", disableEnter);
-
 function Card(storeCardTitle, storeCardContent) {
-    this.title = storeCardTitle;
-    this.body = storeCardContent;
-    this.importance = "None";
-    this.id = Date.now();
-    this.complete = false;
+  this.title = storeCardTitle;
+  this.body = storeCardContent;
+  this.importance = "None";
+  this.id = Date.now();
+  this.complete = false;
 }
 
 function storeCard() {
-    var stringData = JSON.stringify(data);
-    localStorage.setItem("Data Item", stringData);
+  var stringData = JSON.stringify(taskArray);
+  localStorage.setItem("Data Item", stringData);
 }
 
 function getCard() {
-    var storedData = localStorage.getItem("Data Item") || '[]';
-    var parsedData = JSON.parse(storedData);
-    data = parsedData;
+  var storedData = localStorage.getItem("Data Item") || '[]';
+  var parsedData = JSON.parse(storedData);
+  taskArray = parsedData;
 }
 
 function printAllCards() {
   $("#card-section").html('');
-  slicedData = data.slice(0,dataSize);
-  slicedData.forEach(function(task) {
+  slicedTaskArray = taskArray.slice(0,displayedTasks);
+  slicedTaskArray.forEach(function(task) {
     var complete = ''
     if (task.complete) {
       complete = ' completed';
     }
-      $("#card-section").append(
-        `<div id="${task.id}" class="new-idea${complete}">
-          <header>
-            <h1 class="entry-title" contenteditable='true'>${task.title}</h1>
-            <button class="delete"></button>
-          </header>
-          <article>
-            <p class='entry-body' contenteditable='true'>${task.body}</p>
-            <button class="upvote"></button>
-            <button class="downvote"></button>
-            <h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
-            <button class="task-complete">Completed</button>
-          </article>
-          <hr>
-        </div>`
-      );
+    appendText(task, complete);
   });
 }
 
 function printIncompleteCards() {
   $("#card-section").html('');
-  slicedData = data.slice(0,dataSize);
-  slicedData.forEach(function(task) {
+  slicedTaskArray = taskArray.slice(0,displayedTasks);
+  slicedTaskArray.forEach(function(task) {
     if (!task.complete) {
-      $("#card-section").append(
-        `<div id="${task.id}" class="new-idea">
-  				<header>
-  					<h1 class="entry-title" contenteditable='true'>${task.title}</h1>
-  					<button class="delete"></button>
-  				</header>
-  				<article>
-  					<p class='entry-body' contenteditable='true'>${task.body}</p>
-  					<button class="upvote"></button>
-  					<button class="downvote"></button>
-  					<h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
-            <button class="task-complete">Completed</button>
-  				</article>
-  				<hr>
-  			</div>`
-      );
+      appendText(task, '');
     }
   });
 }
 
 function sortArray() {
-  data.sort(function(task1,task2){
+  taskArray.sort(function(task1,task2){
     if (task1.complete>task2.complete) {
       return -1;
     } if (task1.complete<task2.complete) {
@@ -234,18 +196,10 @@ function clearInput() {
   $('#task-input').val('');
 }
 
-function disableEnter() {
-  if ($("#title-input").val() == "" || $("#task-input").val() == "") {
-    $("#submit").prop("disabled", true);
-  } else {
-    $("#submit").prop("disabled", false);
-  }
-}
-
-function editQuality(location, importanceVar) {
-  var objectId = $(location).closest('.new-idea').attr('id');
-  data = JSON.parse(localStorage.getItem("Data Item"));
-  data.forEach(function(object) {
+function editImportance(location, importanceVar) {
+  var objectId = $(location).closest('.new-task').attr('id');
+  taskArray = JSON.parse(localStorage.getItem("Data Item"));
+  taskArray.forEach(function(object) {
     if (object.id == objectId) {
       object.importance = importanceVar;
     }
@@ -254,36 +208,65 @@ function editQuality(location, importanceVar) {
 }
 
 function editTitleText(location, newText) {
-    var objectId = $(location).closest('.new-idea').attr('id');
-    data = JSON.parse(localStorage.getItem('Data Item'));
-    data.forEach(function(object) {
-        if (object.id == objectId) {
-            object.title = newText;
-            return object.title;
-        }
-    });
-    storeCard();
+  var objectId = $(location).closest('.new-task').attr('id');
+  taskArray = JSON.parse(localStorage.getItem('Data Item'));
+  taskArray.forEach(function(object) {
+    if (object.id == objectId) {
+      object.title = newText;
+      return object.title;
+    }
+  });
+  storeCard();
 }
 
 function editBodyText(location, newText) {
-    var objectId = $(location).closest('.new-idea').attr('id');
-    data = JSON.parse(localStorage.getItem('Data Item'));
-    data.forEach(function(object) {
-        if (object.id == objectId) {
-            object.body = newText;
-            return object.body;
-        }
-    });
-    storeCard();
+  var objectId = $(location).closest('.new-task').attr('id');
+  taskArray = JSON.parse(localStorage.getItem('Data Item'));
+  taskArray.forEach(function(object) {
+    if (object.id == objectId) {
+      object.body = newText;
+      return object.body;
+    }
+  });
+  storeCard();
 }
 
 function deleteCard (location, idOfRemoved) {
-    var objectId = $(location).closest('.new-idea').attr('id');
-    var removedId = idOfRemoved;
-    data = JSON.parse(localStorage.getItem("Data Item"));
-    data = data.filter(function(object) {
-        return object.id % objectId;
-    });
-    stringData = JSON.stringify(data);
-    localStorage.setItem("Data Item", stringData);
+  var objectId = $(location).closest('.new-task').attr('id');
+  var removedId = idOfRemoved;
+  taskArray = JSON.parse(localStorage.getItem("Data Item"));
+  taskArray = taskArray.filter(function(object) {
+    return object.id % objectId;
+  });
+  stringData = JSON.stringify(taskArray);
+  localStorage.setItem("Data Item", stringData);
+}
+
+function appendText(task, complete) {
+  $("#card-section").append(
+    `<div id="${task.id}" class="new-task${complete}">
+    <header>
+      <h1 class="entry-title" contenteditable='true'>${task.title}</h1>
+      <button class="delete"></button>
+    </header>
+    <article>
+      <p class='entry-body' contenteditable='true'>${task.body}</p>
+      <button class="upvote"></button>
+      <button class="downvote"></button>
+      <h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
+      <button class="task-complete">Completed</button>
+    </article>
+    <hr>
+    </div>`
+  );
+}
+
+$("#title-input, #task-input").on("keyup", disableEnter);
+
+function disableEnter() {
+  if ($("#title-input").val() == "" || $("#task-input").val() == "") {
+    $("#submit").prop("disabled", true);
+  } else {
+    $("#submit").prop("disabled", false);
+  }
 }
