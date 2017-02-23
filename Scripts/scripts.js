@@ -254,7 +254,7 @@ function appendText(task, complete) {
       <button class="upvote"></button>
       <button class="downvote"></button>
       <h3>Importance:<h4 class="importance">${task.importance}</h4></h3>
-      <button class="task-complete">Completed</button>
+      <button class="task-complete">Completed Task</button>
     </article>
     <hr>
     </div>`

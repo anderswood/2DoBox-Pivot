@@ -22,6 +22,7 @@ main, aside {
 
 main {
   background-color: #e5f3f2;
+  padding-bottom: 10px;
 }
 
 article {
@@ -46,7 +47,8 @@ article {
 
 .new-task {
   text-align: left;
-  margin-bottom: 5px;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 
@@ -117,6 +119,7 @@ textarea {
 }
 
 button {
+  font-family: "Open Sans", sans-serif;
   border-style: none;
   border-radius: 50px;
   border-width: 0px;
@@ -128,16 +131,23 @@ button {
   color: #00a79d;
 }
 
-#submit {
+#submit, .show-complete, .show-more-todos, .task-complete {
   background-color: #00a79d;
   border-radius: 0px;
+}
+
+#submit {
   display: block;
-  height: 35px;
-  margin-bottom: 18px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 15px;
+  margin: 15px auto 18px auto;
   width: 82%;
+  height: 35px;
+}
+
+.show-complete, .show-more-todos {
+  margin: 5px auto 5px auto;
+  width: 82%;
+  height: 30px;
+  font-size: 85%;
 }
 
 #submit:hover {
@@ -148,10 +158,36 @@ button {
   background-color: #5e8480;
 }
 
+#importance-filter {
+  margin: 10px auto 5px auto;
+  width: 80%;
+  text-align: left;
+  padding: 5px
+}
+
+legend {
+  text-align: center;
+}
+
+label {
+
+}
+
+.filters-box {
+  display: flex;
+  justify-content: space-around;
+}
+
+.importance-radio-button {
+  margin-right: 6px;
+  margin-left: 2px;
+  margin-bottom: 4px;
+}
+
 #search {
   height: 25px;
   margin-bottom: 18px;
-  margin-top: 18px;
+  margin-top: 10px;
 }
 
 .delete, .upvote, .downvote {
@@ -193,10 +229,18 @@ button {
   background-image: url("images/downvote-hover.svg");
 }
 
+.task-complete {
+  display: block;
+  margin: 5px auto 5px auto;
+  width: 82%;
+  height: 30px;
+  font-size: 85%;
+}
+
 .completed {
   background-color: #848484;
-  border-bottom: 2px solid #848484;
 }
+
 
 /*----Media Queries ----*/
 
@@ -212,9 +256,14 @@ button {
     width: 500px;
   }
 
-  .entry-title, .entry-body {
-    max-width: 25ch;
+  .show-complete, .show-more-todos {
+    max-width: 200px;
   }
+
+  .task-complete {
+    max-width: 280px;
+  }
+
 }
 
 @media screen and (min-width: 960px) {
@@ -238,9 +287,11 @@ button {
   }
 
   div header, div article {
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
+    width: 95%;
+  }
+
+  .show-complete, .show-more-todos {
+    max-width: 285px;
   }
 
   #search {
@@ -255,10 +306,27 @@ button {
     margin-left: 0;
   }
 
-  .new-idea {
+  .new-task {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
+  }
+
+  #importance-filter {
+    text-align: center;
+  }
+
+  .filters-box {
+    display: inline-block;
+  }
+
+  label {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .task-complete {
+    max-width: 320px;
   }
 
   .logo {

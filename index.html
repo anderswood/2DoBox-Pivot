@@ -18,20 +18,25 @@
         <form>
           <input type="text" id="title-input" placeholder="Title">
           <textarea id="task-input" placeholder="Body"></textarea>
-          <button id="submit" disabled>save</button>
+          <button id="submit" disabled>Save</button>
         </form>
-        <button class="show-complete">Show Completed Tasks</button>
+        <button class="show-complete">Show Completed ToDos</button>
         <button class="show-more-todos">Show More ToDos</button>
       </main>
       <aside>
-        <form>
-          <label>No Filter: <input type="radio" value="" class="importance-radio-button" name="importance"></label>
-          <label>None: <input type="radio" value="None" class="importance-radio-button" name="importance"></label>
-          <label>Low: <input type="radio" value="Low" class="importance-radio-button" name="importance"></label>
-          <label>Normal: <input type="radio" value="Normal" class="importance-radio-button" name="importance"></label>
-          <label>High: <input type="radio" value="High" class="importance-radio-button" name="importance"></label>
-          <label>Critical: <input type="radio" value="Critical" class="importance-radio-button" name="importance"></label>
-        </form>
+        <fieldset id="importance-filter">
+          <legend>Importance Filter</legend>
+          <div class="filters-box">
+            <label>No Filter: <input type="radio" value="" class="importance-radio-button" name="importance"></label>
+            <label>None: <input type="radio" value="None" class="importance-radio-button" name="importance"></label>
+            <label>Low: <input type="radio" value="Low" class="importance-radio-button" name="importance"></label>
+          </div>
+          <div class="filters-box">
+            <label>Normal: <input type="radio" value="Normal" class="importance-radio-button" name="importance"></label>
+            <label>High: <input type="radio" value="High" class="importance-radio-button" name="importance"></label>
+            <label>Critical: <input type="radio" value="Critical" class="importance-radio-button" name="importance"></label>
+        </div>
+        </fieldset>
         <input type="text" id="search" placeholder="Filter ToDos">
         <section id="card-section">
           <!-- New Cards here! -->
